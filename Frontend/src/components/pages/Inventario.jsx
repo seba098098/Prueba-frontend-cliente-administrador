@@ -100,13 +100,12 @@ export default function Inventario() {
     pdf.text("Inventario de Productos", 14, 16);
     pdf.setFontSize(12);
 
-    const tableColumn = ["Código", "Nombre", "Empresa", "Cantidad", "Precio"];
+    const tableColumn = ["id", "Producto_id", "Empresa", "Cantidad"];
     const tableRows = inventario.map((item) => [
+      item.id || "N/A",
       item.producto_codigo || "N/A",
-      item.producto_nombre || "N/A",
       item.empresa_nit || "N/A",
       item.cantidad || "N/A",
-      item.precio_usd?.toFixed(2) || "N/A",
     ]);
 
     const startY = 30;
