@@ -72,3 +72,4 @@ def eliminar_usuario(user_id: int, db: Session = Depends(get_db)):
     db.delete(usuario)
     db.commit()
     return  # El código 204 indica "sin contenido"
+
