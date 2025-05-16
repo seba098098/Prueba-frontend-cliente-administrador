@@ -91,12 +91,22 @@ export default function Productos() {
 
   return (
     <div style={{ maxWidth: 900, margin: "auto", padding: 20 }}>
-      <h2>Productos</h2>
+      <h2 style={{ textAlign: "center" }}>Productos</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Cambiado: setEditing({}) para abrir formulario nuevo */}
       {isAdmin && !editing && (
-        <button onClick={() => setEditing({})}>Nuevo Producto</button>
+        <button onClick={() => setEditing({})} style={{
+            marginBottom: "5px",  // separación abajo
+            padding: "5px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            width: "200px",
+            fontSize: "16px",
+            backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+            color: "#333",                // color del texto
+            textAlign: "center"
+          }}>Nuevo Producto</button>
       )}
 
       {editing && (

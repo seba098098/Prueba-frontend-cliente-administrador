@@ -14,15 +14,20 @@ import PrediccionDemanda from "./components/PrediccionDemanda"; // Importa tu co
 function NavigationWithRoles() {
   const { role } = useAuth();
   return (
-    <nav style={{ padding: "1rem", backgroundColor: "#ddd", marginBottom: 20 }}>
-      <a href="/empresas" style={{ marginRight: 15 }}>Empresas</a>
-      <a href="/productos" style={{ marginRight: 15 }}>Productos</a>
-      <a href="/inventario" style={{ marginRight: 15 }}>Inventario</a>
+    <nav style={{ padding: "1rem", backgroundColor: "#d6eaf8", marginBottom: 15, display: "flex",justifyContent: "center",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",borderRadius: '30px'
+      }}>
+        <img src="/logo192.png" alt="Descripción de la imagen" style={{ width: "40px", height: "40px" , marginRight: 27}} />
+
+      <a href="/empresas" style={{ marginRight: 27,color: "#007bff" }}>Empresas</a>
+      <a href="/productos" style={{ marginRight: 27,color: "#007bff" }}>Productos</a>
+      <a href="/inventario" style={{ marginRight: 27,color: "#007bff" }}>Inventario</a>
       {role === "admin" && (
-        <a href="/usuarios" style={{ marginRight: 15 }}>Usuarios</a>
+        <a href="/usuarios" style={{ marginRight: 20 ,color: "#007bff" }}>Usuarios</a>
       )}
       {/* Enlace a la predicción de demanda */}
-      <a href="/prediccion" style={{ marginLeft: 15 }}>Predicción de Demanda</a>
+      <a href="/prediccion" style={{ marginLeft: 20,color: "#007bff" }}>Predicción de Demanda</a>
+      <img src="/logo192.png" alt="Descripción de la imagen" style={{ width: "40px", height: "40px", marginLeft: 20 }} />
     </nav>
   );
 }
@@ -44,8 +49,9 @@ function AppRoutes() {
       {user && (
         <>
           {/* Header con saludo y Logout */}
-          <header style={{ padding: "1rem", backgroundColor: "#f5f5f5", display: "flex", justifyContent: "space-between" }}>
+          <header style={{ padding: "1rem",borderRadius: '30px',fontWeight: '700', backgroundColor: "  #76d7c4 ", display: "flex", justifyContent: "space-between" }}>
             <span>Bienvenido, {user.email}</span>
+            <span>Esta es su pagina empresarial</span>
             <LogoutButton />
           </header>
 
@@ -119,3 +125,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+

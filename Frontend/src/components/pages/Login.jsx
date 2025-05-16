@@ -17,7 +17,7 @@ export default function Login() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
+    <div style={{ maxWidth: 200, margin: "auto", padding: 30 ,textAlign: "center", marginTop: 80  }}>
       <h2>Iniciar sesión</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -28,6 +28,16 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
+            style={{
+                marginBottom: "5px",  // separación abajo
+                padding: "5px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                width: "200px",
+                fontSize: "16px",
+                backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+                color: "#333"                // color del texto
+              }}
           />
         </div>
         <div style={{ marginTop: 10 }}>
@@ -38,10 +48,31 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
+            style={{
+                marginBottom: "5px",  // separación abajo
+                padding: "5px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                width: "200px",
+                fontSize: "16px",
+                backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+                color: "#333"                // color del texto
+              }}
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ marginTop: 20 }}>
+        <button type="submit" disabled={loading} style={{
+    marginTop: 5,
+    padding: "10px 10px",       // tamaño más grande (altura y ancho)
+    fontSize: "18px",           // texto más grande
+    backgroundColor: "#28a745", // verde bootstrap (verde agradable)
+    color: "white",             // texto blanco para contraste
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+    marginLeft: 20,
+  }}>
           {loading ? "Cargando..." : "Entrar"}
         </button>
       </form>

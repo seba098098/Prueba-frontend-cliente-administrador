@@ -156,27 +156,67 @@ export default function Inventario() {
 
   return (
     <div style={{ maxWidth: 900, margin: "auto", padding: 20 }}>
-      <h2>Inventario</h2>
+      <h2 style={{ textAlign: "center" }}>Inventario</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Botones y campo correo visibles para todos */}
       <div style={{ marginBottom: 20 }}>
-        <button onClick={handleDownloadPDF}>Descargar PDF</button>
+        <button onClick={handleDownloadPDF} style={{
+            marginBottom: "5px",  // separación abajo
+            padding: "5px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            width: "200px",
+            fontSize: "16px",
+            backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+            color: "#333",                // color del texto
+            textAlign: "center"
+          }}>Descargar PDF</button>
         <input
           type="email"
           placeholder="Correo destinatario"
           value={emailDestinatario}
           onChange={(e) => setEmailDestinatario(e.target.value)}
-          style={{ marginLeft: 10, padding: "5px", width: 250 }}
+          style={{
+            marginBottom: "5px",  // separación abajo
+            padding: "5px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            width: "250px",
+            fontSize: "16px",
+            backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+            color: "#333",                // color del texto
+            textAlign: "center"
+          }}
         />
-        <button onClick={handleSendEmail} style={{ marginLeft: 10 }}>
+        <button onClick={handleSendEmail} style={{
+            marginBottom: "5px",  // separación abajo
+            padding: "5px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            width: "200px",
+            fontSize: "16px",
+            backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+            color: "#333",                // color del texto
+            textAlign: "center"
+          }}>
           Enviar PDF por correo
         </button>
       </div>
 
       {/* Funcionalidad CRUD solo para admin */}
       {isAdmin && !editing && (
-        <button onClick={() => setEditing({})} style={{ marginBottom: 20 }}>
+        <button onClick={() => setEditing({})} style={{
+            marginBottom: "5px",  // separación abajo
+            padding: "5px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            width: "200px",
+            fontSize: "16px",
+            backgroundColor: " #d6eaf8 ",  // color de fondo (azul claro)
+            color: "#333",                // color del texto
+            textAlign: "center"
+          }}>
           Nuevo Inventario
         </button>
       )}
