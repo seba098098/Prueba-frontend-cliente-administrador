@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 from app.api import auth, empresas, productos, inventario, ping
@@ -7,18 +8,29 @@ from app.database import init_db
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("app.main")
 
-# Contexto de vida útil de la app para acciones de inicio y cierre
+origins = [
+    "http://localhost:3000",  # URL de tu frontend React
+    # Puedes agregar más orígenes si es necesario
+]
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Iniciando aplicación - creando tablas...")
-    init_db()  # Crea las tablas si no existen antes de arrancar la app
-    yield  # Aquí se ejecuta la app
+    init_db()
+    yield
     logger.info("Aplicación finalizada")
 
-# Crear instancia FastAPI con título y lifespan definido
 app = FastAPI(title="InventarioApp", lifespan=lifespan)
 
-# Registrar routers de las distintas partes de la API
+# Agregar middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,        # Permitir solo frontend React
+    allow_credentials=True,
+    allow_methods=["*"],          # Permitir todos los métodos HTTP
+    allow_headers=["*"],          # Permitir todos los headers
+)
+
 app.include_router(auth.router)
 app.include_router(empresas.router)
 app.include_router(productos.router)

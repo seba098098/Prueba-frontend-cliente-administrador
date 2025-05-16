@@ -1,3 +1,4 @@
+# backend/app/api/usuarios.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -9,15 +10,17 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime, timedelta
 import jwt
 import os
-import logging
-from app.api.dependencies import get_current_admin  # Asegúrate de tener esta dependencia para validación admin
-logger = logging.getLogger("app.api.usuarios")
+from fastapi.security import OAuth2PasswordBearer
+
 router = APIRouter()
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "tu_clave_secreta")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def get_db():
     db = SessionLocal()
@@ -37,12 +40,36 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+def decode_access_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expirado")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    payload = decode_access_token(token)
+    email: str = payload.get("sub")
+    if email is None:
+        raise HTTPException(status_code=401, detail="Token inválido: no contiene email")
+    user = db.query(Usuario).filter(Usuario.email == email).first()
+    if user is None:
+        raise HTTPException(status_code=401, detail="Usuario no encontrado")
+    return user
+
+def get_current_admin(current_user: Usuario = Depends(get_current_user)):
+    if current_user.role != UserRole.admin:
+        raise HTTPException(status_code=403, detail="No tienes permisos suficientes")
+    return current_user
+
 @router.get("/usuarios", response_model=list[UsuarioRead])
-def listar_usuarios(db: Session = Depends(get_db)):
+def listar_usuarios(db: Session = Depends(get_db), admin=Depends(get_current_admin)):
     return db.query(Usuario).all()
 
 @router.get("/usuarios/{user_id}", response_model=UsuarioRead)
-def obtener_usuario(user_id: int, db: Session = Depends(get_db)):
+def obtener_usuario(user_id: int, db: Session = Depends(get_db), admin=Depends(get_current_admin)):
     usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -75,12 +102,10 @@ def actualizar_usuario(
     if not db_user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     
-    # Validar si email nuevo está en uso por otro usuario
     if usuario.email != db_user.email:
         if db.query(Usuario).filter(Usuario.email == usuario.email).first():
             raise HTTPException(status_code=400, detail="Email ya registrado por otro usuario")
     
-    # Actualizamos campos y encriptamos contraseña si cambió
     db_user.email = usuario.email
     if usuario.password:
         db_user.password = pwd_context.hash(usuario.password)
@@ -103,19 +128,15 @@ def eliminar_usuario(user_id: int, db: Session = Depends(get_db), admin=Depends(
     db.delete(usuario)
     db.commit()
     return
+
 @router.post("/auth/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
-    email = user.email.strip().lower()
-    print(f"Intento login: email={email} password={user.password}")
-    db_user = db.query(Usuario).filter(Usuario.email == email).first()
-    if not db_user:
-        print("Usuario no encontrado")
-        raise HTTPException(status_code=401, detail="Email o contraseña incorrectos")
-
-    if not pwd_context.verify(user.password, db_user.password):
-        print("Contraseña incorrecta")
-        raise HTTPException(status_code=401, detail="Email o contraseña incorrectos")
-
-    print("Login exitoso")
+    db_user = db.query(Usuario).filter(Usuario.email == user.email).first()
+    if not db_user or not pwd_context.verify(user.password, db_user.password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email o contraseña incorrectos",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     access_token = create_access_token(data={"sub": db_user.email, "role": db_user.role.value})
-    return {"access_token": access_token, "token_type": "bearer", "role": db_user.role.value, "email": db_user.email}
+    return {"access_token": access_token, "token_type": "bearer"}
