@@ -5,6 +5,7 @@ import logging
 from app.api import auth, empresas, productos, inventario, ping
 from app.database import init_db
 from app.api.email import router as email_router
+from app.api.prediccion import router as prediccion_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("app.main")
@@ -38,3 +39,4 @@ app.include_router(productos.router)
 app.include_router(inventario.router)
 app.include_router(ping.router)
 app.include_router(email_router)
+app.include_router(prediccion_router)

@@ -21,7 +21,7 @@ export default function UsuarioList({ usuarios, onEdit, onDelete, isAdmin }) {
             <td>{u.id}</td>
             <td>{u.email}</td>
             <td>{u.role}</td>
-            <td>{u.password}</td>
+            <td>********</td>
             {isAdmin && (
               <td>
                 <button onClick={() => onEdit(u)}>Editar</button>{" "}
